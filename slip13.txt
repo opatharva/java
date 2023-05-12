@@ -1,0 +1,67 @@
+slip-13
+1.
+
+
+import java.sql.*; 
+import java.io.*; 
+public class DBMetaData 
+{ 
+  public static void main(String[] args) throws Exception 
+  { 
+     ResultSet rs = null; 
+     Class.forName("org.postgresql.Driver"); 
+       Connection  conn = DriverManager 
+            .getConnection("jdbc:postgresql://localhost:5432/java", 
+            "java", "123"); 
+    DatabaseMetaData dbmd = conn.getMetaData(); 
+    System.out.println("Database Product name = " + dbmd.getDatabaseProductName()); 
+    System.out.println("User name = " + dbmd.getUserName()); 
+    System.out.println("Database driver  name= " + dbmd.getDriverName()); 
+    System.out.println("Database driver version = "+ dbmd.getDriverVersion()); 
+    System.out.println("Database product name = " + dbmd.getDatabaseProductName()); 
+    System.out.println("Database Version = " + dbmd.getDriverMajorVersion()); 
+    rs = dbmd.getTables(null,null,null, new String[]{"TABLE"}); 
+    System.out.println("List of tables..."); 
+    while(rs.next()) 
+    { 
+       String tblName = rs.getString("TABLE_NAME"); 
+        System.out.println("Table : "+ tblName); 
+    } 
+    conn.close(); 
+  } 
+} 
+
+
+2.
+import java.util.Random;
+
+public class ThreadLifecycleDemo implements Runnable {
+    
+    private String threadName;
+    
+    public ThreadLifecycleDemo(String threadName) {
+        this.threadName = threadName;
+    }
+    
+    public void run() {
+        System.out.println("Thread " + threadName + " created.");
+        
+        Random rand = new Random();
+        int sleepTime = rand.nextInt(5000);
+        System.out.println("Thread " + threadName + " sleeping for " + sleepTime + " milliseconds.");
+        
+        try {
+            Thread.sleep(sleepTime);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
+        System.out.println("Thread " + threadName + " dead.");
+    }
+    
+    public static void main(String[] args) {
+        Thread t = new Thread(new ThreadLifecycleDemo("MyThread"));
+        t.start();
+    }
+}
+

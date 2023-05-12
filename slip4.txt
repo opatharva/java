@@ -1,0 +1,89 @@
+slip-4
+runnable Std code
+Q1
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class BlinkingText implements Runnable {
+
+    private JLabel label;
+
+    public BlinkingText(JLabel label) {
+        this.label = label;
+    }
+
+    public void run() {
+        while (true) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            label.setVisible(!label.isVisible());
+        }
+    }
+
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("Blinking Text Example");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        JLabel label = new JLabel("Blinking Text!");
+        label.setFont(new Font("Serif", Font.PLAIN, 24));
+        frame.getContentPane().add(label, BorderLayout.CENTER);
+        frame.pack();
+        frame.setVisible(true);
+
+        BlinkingText bt = new BlinkingText(label);
+        Thread t = new Thread(bt);
+        t.start();
+    }
+}
+
+Q2
+import java.util.*;
+
+public class CitySTD {
+
+    private static HashMap<String, String> cityCodes = new HashMap<>();
+
+    public static void addCity(String city, String code) {
+        if (!cityCodes.containsKey(city)) {
+            cityCodes.put(city, code);
+            System.out.println(city + " added to the collection.");
+        } else {
+            System.out.println(city + " already exists in the collection.");
+        }
+    }
+
+    public static void removeCity(String city) {
+        if (cityCodes.containsKey(city)) {
+            cityCodes.remove(city);
+            System.out.println(city + " removed from the collection.");
+        } else {
+            System.out.println(city + " not found in the collection.");
+        }
+    }
+
+    public static void searchCity(String city) {
+        if (cityCodes.containsKey(city)) {
+            System.out.println(city + " STD code is " + cityCodes.get(city));
+        } else {
+            System.out.println(city + " not found in the collection.");
+        }
+    }
+
+    public static void main(String[] args) {
+        addCity("Delhi", "011");
+        addCity("Mumbai", "022");
+        addCity("Kolkata", "033");
+        addCity("Chennai", "044");
+
+        removeCity("Kolkata");
+        removeCity("Hyderabad");
+
+        searchCity("Mumbai");
+        searchCity("Hyderabad");
+    }
+}
+
+

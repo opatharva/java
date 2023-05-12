@@ -1,0 +1,102 @@
+
+slip-1
+
+public class AlphabetDisplay {
+    public static void main(String[] args) throws InterruptedException {
+        char start = 'a';
+        char end = 'z';
+
+        while (start <= end) {
+            System.out.print(start + " ");
+            start++;
+            Thread.sleep(2000); // wait for 2 seconds before displaying the next alphabet
+        }
+    }
+}
+
+
+
+Q2
+import javax.swing.*;
+import java.awt.*;
+import java.sql.*;
+
+public class EmployeeDetails extends JFrame {
+    private JLabel lblEno, lblEName, lblDesignation, lblSalary;
+    private JTextField txtEno, txtEName, txtDesignation, txtSalary;
+    private JButton btnSave;
+    private Connection con;
+    
+    public EmployeeDetails() {
+        super("Employee Details");
+        setLayout(new GridLayout(5, 2));
+        
+        lblEno = new JLabel("Eno:");
+        txtEno = new JTextField(10);
+        add(lblEno);
+        add(txtEno);
+        
+        lblEName = new JLabel("EName:");
+        txtEName = new JTextField(10);
+        add(lblEName);
+        add(txtEName);
+        
+        lblDesignation = new JLabel("Designation:");
+        txtDesignation = new JTextField(10);
+        add(lblDesignation);
+        add(txtDesignation);
+        
+        lblSalary = new JLabel("Salary:");
+        txtSalary = new JTextField(10);
+        add(lblSalary);
+        add(txtSalary);
+        
+        btnSave = new JButton("Save");
+        btnSave.addActionListener(e -> saveEmployee());
+        add(btnSave);
+        
+        pack();
+        setVisible(true);
+        
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test", "root", "password");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    private void saveEmployee() {
+        try {
+            int eno = Integer.parseInt(txtEno.getText());
+            String ename = txtEName.getText();
+            String designation = txtDesignation.getText();
+            double salary = Double.parseDouble(txtSalary.getText());
+            
+            String query = "INSERT INTO employee VALUES (?, ?, ?, ?)";
+            PreparedStatement pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, eno);
+            pstmt.setString(2, ename);
+            pstmt.setString(3, designation);
+            pstmt.setDouble(4, salary);
+            
+            int result = pstmt.executeUpdate();
+            
+            if (result > 0) {
+                JOptionPane.showMessageDialog(this, "Employee details saved successfully.");
+                txtEno.setText("");
+                txtEName.setText("");
+                txtDesignation.setText("");
+                txtSalary.setText("");
+            } else {
+                JOptionPane.showMessageDialog(this, "Failed to save employee details.");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public static void main(String[] args) {
+        new EmployeeDetails();
+    }
+}

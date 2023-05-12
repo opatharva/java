@@ -1,0 +1,89 @@
+slip-30
+1.
+public class SynchronizationDemo {
+    public static void main(String[] args) {
+        Counter counter = new Counter();
+        Thread t1 = new Thread(new Incrementer(counter));
+        Thread t2 = new Thread(new Incrementer(counter));
+        t1.start();
+        t2.start();
+    }
+
+    private static class Counter {
+        private int count;
+
+        public synchronized void increment() {
+            count++;
+            System.out.println("Count is now " + count);
+        }
+    }
+
+    private static class Incrementer implements Runnable {
+        private Counter counter;
+
+        public Incrementer(Counter counter) {
+            this.counter = counter;
+        }
+
+        public void run() {
+            for (int i = 0; i < 5; i++) {
+                counter.increment();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+}
+
+2.
+import java.sql.*;
+
+public class ScrollableResultSetDemo {
+    public static void main(String[] args) {
+        try {
+            // Step 1: Establish a connection to the database
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydatabase", "root", "password");
+
+            // Step 2: Create a statement object with scrollable ResultSet
+            Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+            // Step 3: Execute a query and get a ResultSet
+            ResultSet rs = stmt.executeQuery("SELECT * FROM Teacher");
+
+            // Step 4: Traverse the ResultSet using a while loop
+            while (rs.next()) {
+                int tid = rs.getInt("TID");
+                String tname = rs.getString("TName");
+                int salary = rs.getInt("Salary");
+                System.out.println("TID: " + tid + ", TName: " + tname + ", Salary: " + salary);
+            }
+
+            // Step 5: Move the cursor backward in the ResultSet
+            System.out.println("Moving the cursor backward...");
+            while (rs.previous()) {
+                int tid = rs.getInt("TID");
+                String tname = rs.getString("TName");
+                int salary = rs.getInt("Salary");
+                System.out.println("TID: " + tid + ", TName: " + tname + ", Salary: " + salary);
+            }
+
+            // Step 6: Move the cursor to a specific row in the ResultSet
+            System.out.println("Moving the cursor to the 3rd row...");
+            rs.absolute(3);
+            int tid = rs.getInt("TID");
+            String tname = rs.getString("TName");
+            int salary = rs.getInt("Salary");
+            System.out.println("TID: " + tid + ", TName: " + tname + ", Salary: " + salary);
+
+            // Step 7: Close the ResultSet, statement, and connection
+            rs.close();
+            stmt.close();
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
